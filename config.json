@@ -1,0 +1,15 @@
+{
+  "name": "payment-module",
+  "title": "Payment",
+  "username": "Mewgan",
+  "remote": "https://github.com/Mewgan/payment-module",
+  "download-url": "https://github.com/Mewgan/payment-module/archive/master.zip",
+  "description": "Payment module",
+  "author": "S.Sumugan",
+  "version": "0.1",
+
+  "models": [
+
+  ]
+
+}
