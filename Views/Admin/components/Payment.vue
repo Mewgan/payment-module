@@ -81,8 +81,52 @@
                     </ul>
                     <div class="card-body tab-content style-default-bright">
                         <div class="active tab-pane" id="field-1">
-                            <h2>Bonjour {{auth.first_name}} {{auth.last_name}},</h2>
-                            <p>Vous êtes actuellement en période d'essai jusqu'au {{ website.expiration_date.date | moment('DD-MM-YYYY HH:mm:ss') }}</p>
+                            <h2 class="text-primary mt0">Récapitulatif</h2>
+                            <p class="lead">
+                                Voici le détail de votre compte
+                            </p>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>Compte :</strong></div>
+                                <div class="col-md-9">{{auth.first_name}} {{auth.last_name}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>E-mail :</strong></div>
+                                <div class="col-md-9">{{ auth.email }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>Date de création :</strong></div>
+                                <div class="col-md-9">{{ auth.registered_at.date | moment('DD-MM-YYYY HH:mm:ss') }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>État :</strong></div>
+                                <div class="col-md-9">{{ detail.type }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>Date d'expiration :</strong></div>
+                                <div class="col-md-9">{{ website.expiration_date.date | moment('DD-MM-YYYY HH:mm:ss') }}</div>
+                            </div>
+                            <hr class="ruler-xl">
+                            <p class="lead">
+                                Détail sur les paiements
+                            </p>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>Nombre de paiments :</strong></div>
+                                <div class="col-md-9">{{ detail.count_payments }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>Montant du dernier paiement :</strong></div>
+                                <div class="col-md-9">
+                                    <span v-if="detail.last_payment_amount != null">{{ detail.last_payment_amount }}</span>
+                                    <span v-else>Aucun paiement</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-primary"><strong>Date du dernier paiement :</strong></div>
+                                <div class="col-md-9">
+                                    <span v-if="detail.last_payment_date != null">{{ detail.last_payment_date.date | moment('DD-MM-YYYY HH:mm:ss') }}</span>
+                                    <span v-else>Aucun paiement</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="tab-pane" id="field-2">
                             <div class="row">
@@ -214,11 +258,17 @@
         data(){
             return {
                 website_id: this.$route.params.website_id,
+                detail: {
+                    count_payments: 0,
+                    type: '',
+                    last_payment_date: null,
+                    last_payment_amount: null
+                },
                 params: {
                     default: {
                         month: 1,
                         amount: null
-                    },
+                    }
                 },
                 plan: 'custom',
                 total: 0,
@@ -235,8 +285,6 @@
             ...mapGetters(['auth', 'website', 'system']),
             customTotal(){
                 return (parseInt(this.params.default.month) * parseFloat(this.params.default.amount)).toFixed(2);
-            },
-            isInTrial(){
             }
         },
         methods: {
@@ -285,8 +333,8 @@
             pay(token){
                 if(parseFloat(this.total) > 0){
                     let month = 1;
-                    if(this.plan == 'custom') month = this.params.default.month
-                    else if(this.params.promo[this.plan] !== undefined) month = this.params.promo[this.plan].month
+                    if(this.plan == 'custom') month = this.params.default.month;
+                    else if(this.params.promo[this.plan] !== undefined) month = this.params.promo[this.plan].month;
                     this.create({
                         api: payment_api.pay + this.website_id,
                         value: {
@@ -296,7 +344,7 @@
                         }
                     }).then((response) => {
                         this.response = response.data;
-                        this.setWebsiteValue({key: 'expiration_date', value: this.response.data.new_expiration_date})
+                        this.setWebsiteValue({key: 'expiration_date', value: this.response.data.new_expiration_date});
                         $('#rootwizard').bootstrapWizard('last');
                         $('.payment .left-panel ul.wizard li.next').hide();
                     })

@@ -91,4 +91,8 @@ class AdminPaymentController extends AdminController
         }
         return ['status' => 'error', 'message' => 'Requête non autorisée'];
     }
+
+    public function getPaymentDetails($website){
+
+    }
 }
