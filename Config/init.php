@@ -19,8 +19,7 @@ return [
             'PaymentModule' => [
                 'path' => 'src/Modules/Payment/',
                 'namespace' => '\\Jet\\Modules\\Payment',
-                'view_dir' => 'src/Modules/Payment/Views/',
-                'prefix' => 'admin',
+                'view_dir' => 'src/Modules/Payment/Views/'
             ],
         ],
         'fixtures' => [

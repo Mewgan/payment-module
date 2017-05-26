@@ -90,8 +90,8 @@
                                 <div class="col-md-9">{{auth.first_name}} {{auth.last_name}}</div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3 text-primary"><strong>E-mail :</strong></div>
-                                <div class="col-md-9">{{ auth.email }}</div>
+                                <div class="col-md-3 text-primary"><strong>Société :</strong></div>
+                                <div class="col-md-9">{{ website.society.name }}</div>
                             </div>
                             <div class="row">
                                 <div class="col-md-3 text-primary"><strong>Date de création :</strong></div>
@@ -99,7 +99,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3 text-primary"><strong>État :</strong></div>
-                                <div class="col-md-9">{{ detail.type }}</div>
+                                <div class="col-md-9">
+                                    <i v-show="website.state == -1" class="fa fa-clock-o text-warning" aria-hidden="true"> Période d'éssai</i>
+                                    <i v-show="website.state == 1" class="fa fa-check text-success" aria-hidden="true"> Actif</i>
+                                    <i v-show="website.state == 0" class="fa fa-times text-danger" aria-hidden="true"> Inactif</i>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-3 text-primary"><strong>Date d'expiration :</strong></div>
@@ -116,7 +120,7 @@
                             <div class="row">
                                 <div class="col-md-3 text-primary"><strong>Montant du dernier paiement :</strong></div>
                                 <div class="col-md-9">
-                                    <span v-if="detail.last_payment_amount != null">{{ detail.last_payment_amount }}</span>
+                                    <span v-if="detail.last_payment_amount != null">{{ detail.last_payment_amount }} <i :class="'fa fa-' + detail.currency"></i></span>
                                     <span v-else>Aucun paiement</span>
                                 </div>
                             </div>
@@ -229,7 +233,12 @@
                             </div><!--end .row -->
                         </div>
                         <div class="tab-pane" id="field-3">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <datatable :config="datatable_config" :reload="reload_payments" :api="api" :callback="callback"></datatable>
 
+                                </div>
+                            </div><!--end .row -->
                         </div>
                     </div><!--end .card-body -->
                 </div><!--end .card -->
@@ -255,12 +264,17 @@
     import {mapGetters, mapActions} from 'vuex'
 
     export default{
+        components: {
+            Datatable: resolve => {
+                require(['@front/components/Helper/Datatable.vue'], resolve)
+            }
+        },
         data(){
             return {
                 website_id: this.$route.params.website_id,
                 detail: {
                     count_payments: 0,
-                    type: '',
+                    currency: 'eur',
                     last_payment_date: null,
                     last_payment_amount: null
                 },
@@ -278,7 +292,18 @@
                     status: 'error',
                     message: 'Aucun paiement effectué',
                     data: {}
-                }
+                },
+                api: payment_api.all + this.$route.params.website_id,
+                datatable_config: {
+                    columns: {
+                        'Titre': {"data": "title"},
+                        'Référence': {"data": "reference"},
+                        'Montant': {"data": "amount"},
+                        'Date': {"data": "created_at"},
+                        'Action': {"data": null, "orderable": false, "defaultContent": ""}
+                    }
+                },
+                reload_payments: false,
             }
         },
         computed: {
@@ -289,6 +314,11 @@
         },
         methods: {
             ...mapActions(['create', 'read', 'setWebsiteValue']),
+            getDetails(){
+                this.read({api: payment_api.get_payment_details + this.website_id}).then((response) => {
+                    this.detail = response.data;
+                })
+            },
             initStripe(key){
                 this.stripe = Stripe(key);
                 let elements = this.stripe.elements();
@@ -319,6 +349,54 @@
                     }
                 });
             },
+            initWizard(){
+                let o = this;
+                $('#rootwizard').bootstrapWizard({
+                    onTabClick: () => {
+                        return false;
+                    },
+                    onTabShow: (tab, navigation, index) => {
+                        FormWizard()._handleTabShow(tab, navigation, index, $('#rootwizard'));
+                    },
+                    onPrevious: (tab, navigation, index) => {
+                        switch (index){
+                            case 0:
+                                $('.payment .left-panel ul.wizard li').hide();
+                                $('.payment .left-panel ul.wizard li.next').show();
+                                $('.payment .left-panel ul.wizard li.next a').html('Étape suivante');
+                                break;
+                            case 1:
+                                $('.payment .left-panel ul.wizard li.next').show();
+                                $('.payment .left-panel ul.wizard li.next a').html('<i class="fa fa-check"></i> Valider');
+                                break;
+                        }
+                    },
+                    onNext: (tab, navigation, index) => {
+                        let form = $('#rootwizard').find('.form-validation');
+                        let valid = form.valid();
+                        if(!valid) {
+                            form.data('validator').focusInvalid();
+                            return false;
+                        }
+                        switch (index){
+                            case 1:
+                                $('.payment .left-panel ul.wizard li').show();
+                                $('.payment .left-panel ul.wizard li.next a').html('<i class="fa fa-check"></i> Valider');
+                                if(o.plan == 'custom') o.total = parseFloat(o.customTotal);
+                                else if(o.params.promo[o.plan] !== undefined) o.total = parseFloat(o.params.promo[o.plan].amount);
+                                break;
+                            case 2:
+                                o.createToken();
+                                return false;
+                                break;
+                        }
+                    }
+                });
+                o.read({api: payment_api.get_payment_params}).then((response) => {
+                    o.params = response.data;
+                    if(o.params.stripe.public_key !== undefined) o.initStripe(o.params.stripe.public_key)
+                })
+            },
             createToken(){
                 let o = this;
                 this.stripe.createToken(this.card).then((result) => {
@@ -347,60 +425,23 @@
                         this.setWebsiteValue({key: 'expiration_date', value: this.response.data.new_expiration_date});
                         $('#rootwizard').bootstrapWizard('last');
                         $('.payment .left-panel ul.wizard li.next').hide();
-                    })
+                    }).then(() =>{
+                        this.getDetails();
+                    });
                 }
+            },
+            callback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+               $('td:eq(2)', nRow).html(aData['amount'] + ' <i class="fa fa-' + this.detail.currency + '"></i>');
+               $('td:eq(4)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ this.website_id + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Télécharger la facture</a>');
             }
         },
+        created() {
+            this.getDetails();
+        },
         mounted(){
-            let o = this;
             AppVendor()._initTabs();
             AppForm().initialize();
-            $('#rootwizard').bootstrapWizard({
-                onTabClick: () => {
-                    return false;
-                },
-                onTabShow: (tab, navigation, index) => {
-                    FormWizard()._handleTabShow(tab, navigation, index, $('#rootwizard'));
-                },
-                onPrevious: (tab, navigation, index) => {
-                    switch (index){
-                        case 0:
-                            $('.payment .left-panel ul.wizard li').hide();
-                            $('.payment .left-panel ul.wizard li.next').show();
-                            $('.payment .left-panel ul.wizard li.next a').html('Étape suivante');
-                            break;
-                        case 1:
-                            $('.payment .left-panel ul.wizard li.next').show();
-                            $('.payment .left-panel ul.wizard li.next a').html('<i class="fa fa-check"></i> Valider');
-                            break;
-                    }
-                },
-                onNext: (tab, navigation, index) => {
-                    let form = $('#rootwizard').find('.form-validation');
-                    let valid = form.valid();
-                    if(!valid) {
-                        form.data('validator').focusInvalid();
-                        return false;
-                    }
-                    switch (index){
-                        case 1:
-                            $('.payment .left-panel ul.wizard li').show();
-                            $('.payment .left-panel ul.wizard li.next a').html('<i class="fa fa-check"></i> Valider');
-                            if(o.plan == 'custom') o.total = parseFloat(o.customTotal);
-                            else if(o.params.promo[o.plan] !== undefined) o.total = parseFloat(o.params.promo[o.plan].amount);
-                            break;
-                        case 2:
-                            o.createToken();
-                            return false;
-                            break;
-                    }
-                }
-            });
-
-            o.read({api: payment_api.get_payment_params}).then((response) => {
-                o.params = response.data;
-                if(o.params.stripe.public_key !== undefined) o.initStripe(o.params.stripe.public_key)
-            })
+            this.initWizard();
         }
     }
 </script>

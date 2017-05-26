@@ -33,6 +33,10 @@ class Payment extends Model implements \JsonSerializable
      */
     protected $amount;
     /**
+     * @Column(type="string", length=50)
+     */
+    protected $currency;
+    /**
      * @ManyToOne(targetEntity="Jet\Models\Website")
      * @JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
      */
@@ -109,6 +113,22 @@ class Payment extends Model implements \JsonSerializable
     /**
      * @return mixed
      */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param mixed $currency
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCreatedAt()
     {
         return $this->created_at;
@@ -161,9 +181,10 @@ class Payment extends Model implements \JsonSerializable
             'reference' => $this->getReference(),
             'title' => $this->getTitle(),
             'amount' => $this->getAmount(),
+            'currency' => $this->getCurrency(),
             'website' => [
                 'id' => $this->getWebsite()->getId(),
-                'domain' => $this->getWebsite()->getDomain(),
+                'domain' => $this->getWebsite()->getDomain()
             ],
             'created_at' => $this->getCreatedAt()
         ];
