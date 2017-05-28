@@ -293,7 +293,7 @@
                     message: 'Aucun paiement effectué',
                     data: {}
                 },
-                api: payment_api.all + this.$route.params.website_id,
+                api: payment_api.get_website_payments + this.$route.params.website_id,
                 datatable_config: {
                     columns: {
                         'Titre': {"data": "title"},
@@ -303,7 +303,7 @@
                         'Action': {"data": null, "orderable": false, "defaultContent": ""}
                     }
                 },
-                reload_payments: false,
+                reload_payments: false
             }
         },
         computed: {
@@ -422,7 +422,11 @@
                         }
                     }).then((response) => {
                         this.response = response.data;
-                        this.setWebsiteValue({key: 'expiration_date', value: this.response.data.new_expiration_date});
+                        if(this.response.status == 'success'){
+                            this.setWebsiteValue({key: 'expiration_date', value: this.response.data.new_expiration_date});
+                            this.setWebsiteValue({key: 'state', value: 1});
+                            this.reload_payments = !this.reload_payments;
+                        }
                         $('#rootwizard').bootstrapWizard('last');
                         $('.payment .left-panel ul.wizard li.next').hide();
                     }).then(() =>{
@@ -432,7 +436,7 @@
             },
             callback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                $('td:eq(2)', nRow).html(aData['amount'] + ' <i class="fa fa-' + this.detail.currency + '"></i>');
-               $('td:eq(4)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ this.website_id + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Télécharger la facture</a>');
+               $('td:eq(4)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ this.website_id + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
             }
         },
         created() {

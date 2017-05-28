@@ -38,6 +38,9 @@ class FrontPaymentController extends Controller
                 $society = Payment::repo()->getSocietyDetail($website);
                 if (!is_null($society)) {
                     try {
+                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                            $pdf->binary = 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe';
+                        }
                         Stripe::setApiKey($this->app->data['setting']['payment']['stripe']['secret_key']);
                         $charge = Charge::retrieve($payment->getReference());
                         $content = $this->render('Invoice/layout', [

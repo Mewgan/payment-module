@@ -23,15 +23,25 @@ class AdminPaymentController extends AdminController
     /**
      * @param PaymentRequest $request
      * @param Auth $auth
+     * @return array
+     */
+    public function all(PaymentRequest $request, Auth $auth)
+    {
+        return $this->getWebsitePayments($request, $auth);
+    }
+
+    /**
+     * @param PaymentRequest $request
+     * @param Auth $auth
      * @param $website
      * @return array
      */
-    public function all(PaymentRequest $request, Auth $auth, $website)
+    public function getWebsitePayments(PaymentRequest $request, Auth $auth, $website = null)
     {
         $max = ($request->has('length')) ? (int)$request->query('length') : 10;
         $start = ($request->has('start')) ? (int)$request->query('start') : 1;
 
-        if (!$this->isWebsiteOwner($auth, $website))
+        if (!is_null($website) && !$this->isWebsiteOwner($auth, $website))
             return ['status' => 'error', 'message' => 'Vous n\'avez pas les permissions pour voir ces contenus'];
 
         $params = [

@@ -96,7 +96,8 @@
                     <tr>
                         <td>
                             <strong>{{ payment.title }}</strong><br/>
-                            Référence : {{ payment.reference }}
+                            Référence : {{ payment.reference }}<br>
+                            Nouvelle date d'expiration du site : {{ society.website.expiration_date | date ('d/m/Y') }}
                         </td>
                         <td>{{ payment.created_at | date ('d/m/Y') }}</td>
                         <td>{{ payment.amount | number_format(2, '.', ',') }}</td>
@@ -119,7 +120,7 @@
                 <tr>
                     <td>{{ payment.amount | number_format(2, '.', ',') }}</td>
                     <td>0.00</td>
-                    <td>{{ payment.amount | number_format(2, '.', ',') }} <i class="fa fa-{{ payment.currency }}"></i></td>
+                    <td>{{ payment.amount | number_format(2, '.', ',') }} €</td>
                 </tr>
                 </tbody>
             </table>

@@ -1,5 +1,6 @@
 export var global = {
-    icon: 'fa fa-cc-stripe',
+    icon: 'fa fa-credit-card',
+    nav_id: 'payment',
     permission: 2,
     routes: [
         {
@@ -7,7 +8,7 @@ export var global = {
             path: '/payment/dashboard',
             name: 'module:payment:dashboard',
             component: resolve => {
-                require(['./components/Payment.vue'], resolve)
+                require(['./components/PaymentDashboard.vue'], resolve)
             }
         }
     ]
