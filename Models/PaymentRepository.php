@@ -101,7 +101,7 @@ class PaymentRepository extends AppRepository
             ->addSelect('partial w.{id, domain, expiration_date}')
             ->from('Jet\Models\Society', 's')
             ->leftJoin('s.address', 'ad')
-            ->join('Jet\Models\Website', 'w', Join::WITH, 's.id = w.society');
+            ->leftJoin('s.website', 'w');
 
         $result = $query->where($query->expr()->eq('w.id', ':id'))
             ->setParameter('id', $website)

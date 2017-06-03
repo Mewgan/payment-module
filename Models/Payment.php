@@ -44,7 +44,7 @@ class Payment extends Model implements \JsonSerializable
     /**
      * @Column(type="datetime")
      */
-    protected $created_at;
+    public $created_at;
 
     /**
      * @return mixed
