@@ -109,13 +109,11 @@ class AdminPaymentController extends AdminController
                         $interval = new \DateInterval('P' . $values['month'] . 'M');
                         $new_expiration_date = $website->getExpirationDate()->add($interval);
                         if (Payment::create($payment) && Website::where('id', $website->getId())->set(['expiration_date' => $new_expiration_date, 'state' => 1])) {
-                            $setting = $this->app->data['setting'];
                             $content = $this->render('Mail/payment_accepted', [
                                 'values' => $values,
                                 'account' => $account,
                                 'url' => $this->app->data['setting']['admin_domain'] . '?redirect_url=website/' . $website->getId() . '/payment',
-                                'new_expiration_date' => $new_expiration_date,
-                                'setting' => $setting
+                                'new_expiration_date' => $new_expiration_date
                             ]);
                             $mail->sendTo($account->getEmail(), 'Confirmation de paiement', $content);
                             return ['status' => 'success', 'message' => 'Merci ! Votre paiement à bien été pris en compte.', 'data' => compact('values', 'new_expiration_date')];
