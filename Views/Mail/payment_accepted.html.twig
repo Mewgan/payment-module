@@ -1,43 +1,111 @@
 {% extends "mail_layout.html.twig" %}
 
 {% block content %}
-    <tr>
-        <td>
-            <table class="responsive-table" bgcolor="#ffffff" align="center" width="50%" border="0" cellpadding="0" cellspacing="0">
+    <div>
+        <!--[if mso | IE]>
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" align="center" style="width:600px;">
+            <tr>
+                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+        <![endif]-->
+        <div style="margin:0px auto;max-width:600px;background:url({{ asset('WEBZY-Creation-de-site-web.jpg', true) }}) top center / cover no-repeat;">
+            <!--[if mso | IE]>
+            <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;">
+                <v:fill origin="0.5, 0" position="0.5,0" type="tile" src="{{ asset('WEBZY-Creation-de-site-web.jpg', true) }}" />
+                <v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
+            <![endif]-->
+            <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:0px;width:100%;background:url({{ asset('WEBZY-Creation-de-site-web.jpg', true) }}) top center / cover no-repeat;" align="center" border="0" background="{{ asset('WEBZY-Creation-de-site-web.jpg', true) }}">
                 <tbody>
                 <tr>
-                    <td width="5%"></td>
-                    <td width="90%" style="font-family: Questrial,Helvetica, arial, sans-serif; font-size: 18px; color: #282828; text-align:left;">
-                        <table class="responsive-table" bgcolor="#ffffff" align="center" width="100%" border="0" cellpadding="0" cellspacing="0">
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <p>Bonjour {{ account.getFirstName() }} {{ account.getLastName() }},</p>
-                                    <p>Félicitations ! Vous venez de prolonger votre contrat pour {{ values['month'] }} mois.</p>
-                                    <p>Votre forfait est donc valable jusqu'au {{ new_expiration_date | date('d-m-Y H:i:s') }}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td height="10" style="height: 10px"></td>
-                            </tr>
-                            <tr>
-                                <td align="center">
-                                    <div><!--[if mso]>
-                                        <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ url }}" style="height:36px;v-text-anchor:middle;width:200px;" arcsize="14%" strokecolor="#ffffff" fillcolor="#161a0f">
-                                            <w:anchorlock/>
-                                            <center style="color:#ffffff;font-family:sans-serif;font-size:13px;font-weight:bold;">Consulter ma facture</center>
-                                        </v:roundrect>
-                                        <![endif]--><a target="_blank" href="{{ url }}" style="background-color:#161a0f;border:1px solid #ffffff;border-radius:5px;color:#ffffff;display:inline-block;font-family:sans-serif;font-size:13px;font-weight:bold;line-height:36px;text-align:center;text-decoration:none;width:200px;-webkit-text-size-adjust:none;mso-hide:all;">Consulter ma facture</a></div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <td style="text-align:center;vertical-align:top;direction:ltr;font-size:0px;padding:20px 0px;padding-bottom:70px;padding-top:70px;">
+                        <!--[if mso | IE]>
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top;width:600px;">
+                        <![endif]-->
+                        <div class="mj-column-px-600 outlook-group-fix" style="vertical-align:top;display:inline-block;direction:ltr;font-size:13px;text-align:left;width:100%;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                                <tbody>
+                                <tr>
+                                    <td style="word-wrap:break-word;font-size:0px;padding:10px 25px;" align="center">
+                                        <div class="" style="cursor:auto;color:#fff;font-family:Raleway;font-size:30px;line-height:22px;text-align:center;">Prolongation du contrat</div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--[if mso | IE]>
+                        </td></tr></table>
+                        <![endif]-->
                     </td>
-                    <td width="5%"></td>
                 </tr>
                 </tbody>
             </table>
-        </td>
-    </tr>
-
+            <!--[if mso | IE]>
+            </v:textbox>
+            </v:rect>
+            <![endif]-->
+        </div>
+        <!--[if mso | IE]>
+        </td></tr></table>
+        <![endif]-->
+        <!--[if mso | IE]>
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" align="center" style="width:600px;">
+            <tr>
+                <td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;">
+        <![endif]-->
+        <div style="margin:0px auto;max-width:600px;background:#fafafa;">
+            <table role="presentation" cellpadding="0" cellspacing="0" style="font-size:0px;width:100%;background:#fafafa;" align="center" border="0">
+                <tbody>
+                <tr>
+                    <td style="text-align:center;vertical-align:top;direction:ltr;font-size:0px;padding:20px 0px;">
+                        <!--[if mso | IE]>
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top;width:400px;">
+                        <![endif]-->
+                        <div class="mj-column-px-400 outlook-group-fix" style="vertical-align:top;display:inline-block;direction:ltr;font-size:13px;text-align:left;width:100%;">
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                                <tbody>
+                                <tr>
+                                    <td style="word-wrap:break-word;font-size:0px;padding:10px 25px;" align="left">
+                                        <div class="" style="cursor:auto;color:#626262;font-family:Raleway;font-size:13px;line-height:22px;text-align:left;">Bonjour {{ account.first_name }} {{ account.last_name }},</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="word-wrap:break-word;font-size:0px;padding:10px 25px;" align="left">
+                                        <div class="" style="cursor:auto;color:#525252;font-family:Raleway;font-size:13px;line-height:22px;text-align:left;">Félicitations ! Vous venez de prolonger votre contrat pour {{ values['month'] }} mois.</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="word-wrap:break-word;font-size:0px;padding:10px 25px;" align="left">
+                                        <div class="" style="cursor:auto;color:#525252;font-family:Raleway;font-size:13px;line-height:22px;text-align:left;">Votre forfait est donc valable jusqu'au {{ new_expiration_date.date | date('d-m-Y H:i:s') }}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="word-wrap:break-word;font-size:0px;padding:10px 25px;" align="center">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:separate;" align="center" border="0">
+                                            <tbody>
+                                            <tr>
+                                                <td style="border:none;border-radius:3px;color:#ffffff;cursor:auto;padding:10px 25px;" align="center" valign="middle" bgcolor="#161a0f"><a href="{{ url }}" style="text-decoration:none;line-height:100%;background:#161a0f;color:#ffffff;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;font-weight:normal;text-transform:none;margin:0px;" target="_blank">Consulter ma facture</a></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="word-wrap:break-word;font-size:0px;padding:10px 25px;" align="left">
+                                        <div class="" style="cursor:auto;color:#525252;font-family:Raleway;font-size:13px;line-height:22px;text-align:left;">Si le bouton ne fonctionne pas, ouvrir le lien ci-dessous sur votre navigateur :<br><a href="{{ url }}">{{ url }}</a></div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--[if mso | IE]>
+                        </td></tr></table>
+                        <![endif]-->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--[if mso | IE]>
+        </td></tr></table>
+        <![endif]-->
+    </div>
 {% endblock %}
