@@ -33,12 +33,18 @@
         data(){
             return {
                 api: payment_api.all,
+                params: {
+                    stripe: {
+                        tva: 20
+                    }
+                },
                 datatable_config: {
                     columns: {
                         'Société': {"data": "society"},
                         'Titre': {"data": "title"},
                         'Référence': {"data": "reference"},
-                        'Montant': {"data": "amount"},
+                        'Montant HT': {"data": "amount"},
+                        'Total TTC': {"data": "amount"},
                         'Date du paiement': {"data": "created_at"},
                         'Date d\'expiration': {"data": "expiration_date"},
                         'Action': {"data": null, "orderable": false, "defaultContent": ""}
@@ -53,13 +59,17 @@
         methods: {
             ...mapActions(['read']),
             callback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-               $('td:eq(0)', nRow).html('<a href="#/website/' + aData['website_id'] + '">' + aData['society'] + '</a>');
-               $('td:eq(3)', nRow).html(aData['amount'] + ' <i class="fa fa-' + aData['currency'] + '"></i>');
-               $('td:eq(6)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ aData['website_id'] + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
+                $('td:eq(0)', nRow).html('<a href="#/website/' + aData['website_id'] + '">' + aData['society'] + '</a>');
+                $('td:eq(3)', nRow).html(aData['amount'] + ' <i class="fa fa-' + aData['currency'] + '"></i>');
+                let totalTtc = (((this.params.stripe.tva / 100) + 1) * parseFloat(aData['amount'])).toFixed(2);
+                $('td:eq(4)', nRow).html(totalTtc + ' <i class="fa fa-' + aData['currency'] + '"></i>');
+                $('td:eq(7)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ aData['website_id'] + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
             }
         },
-        mounted(){
-
+        created(){
+            this.read({api: payment_api.get_payment_params}).then((response) => {
+                this.params = response.data;
+            })
         }
     }
 </script>

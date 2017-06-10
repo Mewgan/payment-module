@@ -70,8 +70,8 @@ class PaymentRepository extends AppRepository
         /* Order params */
         if (!empty($params['order'])) {
             $columns = ($hasWebsite)
-                ? ['p.title', 'p.reference', 'p.amount', 'p.created_at']
-                : ['s.name', 'p.title', 'p.reference', 'p.amount', 'p.created_at', 'w.expiration_date'];
+                ? ['p.title', 'p.reference', 'p.amount', 'p.amount', 'p.created_at']
+                : ['s.name', 'p.title', 'p.reference', 'p.amount', 'p.amount', 'p.created_at', 'w.expiration_date'];
             foreach ($params['order'] as $order) {
                 if (isset($columns[$order['column']]))
                     $query->addOrderBy($columns[$order['column']], strtoupper($order['dir']));

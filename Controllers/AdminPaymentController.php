@@ -64,7 +64,12 @@ class AdminPaymentController extends AdminController
      */
     public function getPaymentParams()
     {
-        return (isset($this->app->data['setting']['payment'])) ? $this->app->data['setting']['payment'] : '';
+        $data = [];
+        if(isset($this->app->data['setting']['payment'])) {
+            unset($this->app->data['setting']['payment']['stripe']['secret_key']);
+            $data = $this->app->data['setting']['payment'];
+        }
+        return $data;
     }
 
     /**
@@ -91,8 +96,9 @@ class AdminPaymentController extends AdminController
                 $values = $request->values();
                 try {
                     Stripe::setApiKey($this->app->data['setting']['payment']['stripe']['secret_key']);
+                    $amount = (($this->app->data['setting']['payment']['stripe']['tva'] / 100) + 1) * $values['total'];
                     $charge = Charge::create([
-                        'amount' => $values['total'] * 100,
+                        'amount' => number_format($amount, 2, '.', ' ') * 100,
                         'currency' => $this->app->data['setting']['payment']['stripe']['currency'],
                         'description' => "Abonnement de {$values['month']} mois",
                         'source' => $values['stripeToken'],
@@ -102,6 +108,7 @@ class AdminPaymentController extends AdminController
                         $payment = [
                             'title' => "Abonnement de {$values['month']} mois",
                             'amount' => $values['total'],
+                            'tax' => $this->app->data['setting']['payment']['stripe']['tva'],
                             'currency' => $charge->currency,
                             'reference' => $charge->id,
                             'website' => $website
@@ -139,7 +146,8 @@ class AdminPaymentController extends AdminController
     {
         $data = [
             'count_payments' => 0,
-            'currency' => 'eur',
+            'currency' => $this->app->data['setting']['payment']['stripe']['currency'],
+            'tva' => $this->app->data['setting']['payment']['stripe']['tva'],
             'last_payment_date' => null,
             'last_payment_amount' => null
         ];

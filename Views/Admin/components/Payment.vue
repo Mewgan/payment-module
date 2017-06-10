@@ -186,14 +186,15 @@
                                                             <div class="form-group custom-center-bloc">
                                                                 <input type="number" class="form-control" v-model="params.default.month" min="1"/>
                                                             </div>
-                                                            <p class="ml30 custom-right-bloc">mois = <strong class="fz20">{{customTotal}}€ TTC</strong></p>
+                                                            <p class="ml30 custom-right-bloc">mois = <strong class="fz20">{{customTotal}}€ HT</strong></p>
                                                         </div><!--end .col -->
                                                     </div>
                                                 </div><!--end #tab1 -->
                                                 <div class="tab-pane" id="tab2">
                                                     <br/><br/>
                                                     <div class="col-sm-9">
-                                                        <p>Total : <strong class="fz2 pull-right">{{total}}€ TTC</strong></p>
+                                                        <p class="fz2">Montant : <strong class="pull-right">{{total}}€ HT</strong></p>
+                                                        <p class="fz2">Total TTC : <strong class="pull-right">{{totalTtc}}€ TTC</strong></p>
                                                         <div class="form-row">
                                                             <label for="card-element" class="mb20">
                                                                 Carte de paiement :
@@ -298,7 +299,8 @@
                     columns: {
                         'Titre': {"data": "title"},
                         'Référence': {"data": "reference"},
-                        'Montant': {"data": "amount"},
+                        'Montant HT': {"data": "amount"},
+                        'Montant TTC': {"data": "amount"},
                         'Date': {"data": "created_at"},
                         'Action': {"data": null, "orderable": false, "defaultContent": ""}
                     }
@@ -310,6 +312,9 @@
             ...mapGetters(['auth', 'website', 'system']),
             customTotal(){
                 return (parseInt(this.params.default.month) * parseFloat(this.params.default.amount)).toFixed(2);
+            },
+            totalTtc(){
+                return (((this.detail.tva / 100) + 1) * this.total).toFixed(2);
             }
         },
         methods: {
@@ -435,8 +440,10 @@
                 }
             },
             callback(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-               $('td:eq(2)', nRow).html(aData['amount'] + ' <i class="fa fa-' + this.detail.currency + '"></i>');
-               $('td:eq(4)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ this.website_id + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
+                $('td:eq(2)', nRow).html(aData['amount'] + ' <i class="fa fa-' + this.detail.currency + '"></i>');
+                let totalTtc = (((this.detail.tva / 100) + 1) * parseFloat(aData['amount'])).toFixed(2);
+                $('td:eq(3)', nRow).html(totalTtc + ' <i class="fa fa-' + this.detail.currency + '"></i>');
+                $('td:eq(5)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ this.website_id + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
             }
         },
         created() {

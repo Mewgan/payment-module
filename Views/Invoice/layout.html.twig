@@ -25,11 +25,11 @@
         <div class="col-xs-5">
             <img src="{{ asset('img/Logo-webzy.png', true) }}" style="width: 200px;" class="logo">
             <address>
-                <strong>{{ setting.name }}</strong><br/>
-                {{ setting.params.address.road }}<br/>
-                {{ setting.params.address.postal_code }} {{ setting.params.address.city }}<br/>
-                {{ setting.params.address.country }}<br/>
-                Tél: {{ setting.params.phone }}<br/>
+                <strong>{{ _data.setting.name }}</strong><br/>
+                {{ _data.setting.params.address.road }}<br/>
+                {{ _data.setting.params.address.postal_code }} {{ _data.setting.params.address.city }}<br/>
+                {{ _data.setting.params.address.country }}<br/>
+                Tél: {{ _data.setting.params.phone }}<br/>
             </address>
         </div>
         <div class="col-xs-5 col-xs-offset-2 mt40">
@@ -100,7 +100,7 @@
                             Nouvelle date d'expiration du site : {{ society.website.expiration_date.date | date ('d/m/Y') }}
                         </td>
                         <td>{{ payment.created_at.date | date('d/m/Y') }}</td>
-                        <td>{{ payment.amount | number_format(2, '.', ',') }}</td>
+                        <td>{{ payment.amount | number_format(2, '.', ' ') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -118,9 +118,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>{{ payment.amount | number_format(2, '.', ',') }}</td>
-                    <td>0.00</td>
-                    <td>{{ payment.amount | number_format(2, '.', ',') }} €</td>
+                    <td>{{ payment.amount | number_format(2, '.', ' ') }}</td>
+                    <td>{{ _data.setting.payment.stripe.tva }} %</td>
+                    <td>{{ (((_data.setting.payment.stripe.tva/100)+1)*payment.amount) | number_format(2, '.', ' ') }} €</td>
                 </tr>
                 </tbody>
             </table>
@@ -129,13 +129,13 @@
     <hr />
     <footer class="row mt40">
         <div class="col-xs-4 center-align">
-            <strong>Tél : </strong>{{ setting.params.phone }}
+            <strong>Tél : </strong>{{ _data.setting.params.phone }}
         </div>
         <div class="col-xs-4 center-align">
-            <strong>E-mail : </strong>{{ setting.params.email }}
+            <strong>E-mail : </strong>{{ _data.setting.params.email }}
         </div>
         <div class="col-xs-4 center-align">
-            <strong>Site web : </strong>{{ setting.domain }}
+            <strong>Site web : </strong>{{ _data.setting.domain }}
         </div>
     </footer>
 </div>

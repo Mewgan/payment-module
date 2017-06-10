@@ -34,7 +34,6 @@ class FrontPaymentController extends Controller
             $payment = Payment::findOneBy(['id' => $id, 'website' => $website]);
             if (!is_null($payment)) {
                 $log = $logger->getLogger('payment');
-                $setting = $this->app->data['setting'];
                 $society = Payment::repo()->getSocietyDetail($website);
                 if (!is_null($society)) {
                     try {
@@ -47,7 +46,6 @@ class FrontPaymentController extends Controller
                             'charge' => $charge,
                             'payment' => $payment,
                             'society' => $society,
-                            'setting' => $setting
                         ]);
 
                         $pdf->addPage($content);
