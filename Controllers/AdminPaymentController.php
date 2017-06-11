@@ -96,7 +96,8 @@ class AdminPaymentController extends AdminController
                 $values = $request->values();
                 try {
                     Stripe::setApiKey($this->app->data['setting']['payment']['stripe']['secret_key']);
-                    $amount = (($this->app->data['setting']['payment']['stripe']['tva'] / 100) + 1) * $values['total'];
+                    $tva = $this->app->data['setting']['payment']['stripe']['tva'];
+                    $amount = (($tva / 100) + 1) * $values['total'];
                     $charge = Charge::create([
                         'amount' => number_format($amount, 2, '.', ' ') * 100,
                         'currency' => $this->app->data['setting']['payment']['stripe']['currency'],
@@ -108,7 +109,7 @@ class AdminPaymentController extends AdminController
                         $payment = [
                             'title' => "Abonnement de {$values['month']} mois",
                             'amount' => $values['total'],
-                            'tax' => $this->app->data['setting']['payment']['stripe']['tva'],
+                            'tax' => $tva,
                             'currency' => $charge->currency,
                             'reference' => $charge->id,
                             'website' => $website

@@ -305,6 +305,7 @@
                         'Action': {"data": null, "orderable": false, "defaultContent": ""}
                     }
                 },
+                payment_in_progress: false,
                 reload_payments: false
             }
         },
@@ -391,7 +392,7 @@
                                 else if(o.params.promo[o.plan] !== undefined) o.total = parseFloat(o.params.promo[o.plan].amount);
                                 break;
                             case 2:
-                                o.createToken();
+                                if(o.payment_in_progress == false) o.createToken();
                                 return false;
                                 break;
                         }
@@ -404,10 +405,12 @@
             },
             createToken(){
                 let o = this;
+                o.payment_in_progress = true;
                 this.stripe.createToken(this.card).then((result) => {
                     if (result.error) {
                         let errorElement = document.getElementById('card-errors');
                         errorElement.textContent = result.error.message;
+                        o.payment_in_progress = false;
                     } else {
                         o.pay(result.token);
                     }
@@ -436,6 +439,7 @@
                         $('.payment .left-panel ul.wizard li.next').hide();
                     }).then(() =>{
                         this.getDetails();
+                        this.payment_in_progress = false;
                     });
                 }
             },
