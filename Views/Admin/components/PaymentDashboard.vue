@@ -1,7 +1,3 @@
-<style>
-
-</style>
-
 <template>
     <section class="payment-dashboard style-default-bright">
         <div class="section-header">
@@ -39,6 +35,7 @@
                     }
                 },
                 datatable_config: {
+                    dom: 'Blfrtip',
                     columns: {
                         'Société': {"data": "society"},
                         'Titre': {"data": "title"},

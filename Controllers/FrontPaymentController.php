@@ -39,6 +39,8 @@ class FrontPaymentController extends Controller
                     try {
                         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                             $pdf->binary = 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe';
+                        }else{
+                            $pdf->binary = 'xvfb-run -- /usr/bin/wkhtmltopdf';
                         }
                         Stripe::setApiKey($this->app->data['setting']['payment']['stripe']['secret_key']);
                         $charge = Charge::retrieve($payment->getReference());
@@ -59,7 +61,7 @@ class FrontPaymentController extends Controller
                 }
             }
         }
-        return $this->redirect('public.page');
+        return $this->redirect('public.page', ['_locale' => $this->app->data['_locale']]);
     }
 
 }
