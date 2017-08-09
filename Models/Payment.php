@@ -2,6 +2,8 @@
 
 namespace Jet\Modules\Payment\Models;
 
+use Jet\Models\Account;
+use Jet\Models\Website;
 use JetFire\Db\Model;
 use Doctrine\ORM\Mapping;
 
@@ -41,8 +43,13 @@ class Payment extends Model implements \JsonSerializable
      */
     protected $currency;
     /**
+     * @ManyToOne(targetEntity="Jet\Models\Account")
+     * @JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $account;
+    /**
      * @ManyToOne(targetEntity="Jet\Models\Website")
-     * @JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     * @JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $website;
     /**
@@ -162,9 +169,24 @@ class Payment extends Model implements \JsonSerializable
         $this->created_at = $created_at;
     }
 
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
 
     /**
-     * @return mixed
+     * @param Account $account
+     */
+    public function setAccount(Account $account)
+    {
+        $this->account = $account;
+    }
+
+    /**
+     * @return Website
      */
     public function getWebsite()
     {
@@ -172,9 +194,9 @@ class Payment extends Model implements \JsonSerializable
     }
 
     /**
-     * @param mixed $website
+     * @param Website $website
      */
-    public function setWebsite($website)
+    public function setWebsite(Website $website)
     {
         $this->website = $website;
     }
@@ -203,6 +225,10 @@ class Payment extends Model implements \JsonSerializable
             'amount' => $this->getAmount(),
             'tax' => $this->getTax(),
             'currency' => $this->getCurrency(),
+            'account' => [
+                'id' => $this->getAccount()->getId(),
+                'email' => $this->getAccount()->getEmail()
+            ],
             'website' => [
                 'id' => $this->getWebsite()->getId(),
                 'domain' => $this->getWebsite()->getDomain()

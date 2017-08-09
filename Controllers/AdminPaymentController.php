@@ -112,6 +112,7 @@ class AdminPaymentController extends AdminController
                             'tax' => $tva,
                             'currency' => $charge->currency,
                             'reference' => $charge->id,
+                            'account' => $account,
                             'website' => $website
                         ];
                         $interval = new \DateInterval('P' . $values['month'] . 'M');
