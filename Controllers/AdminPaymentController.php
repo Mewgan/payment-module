@@ -84,15 +84,16 @@ class AdminPaymentController extends AdminController
         if ($request->method() == 'POST') {
             $response = $request->validate();
             $log = $logger->getLogger('payment');
-            /** @var Website $website */
-            $website = Website::findOneById($website);
-            if (is_null($website)) return ['status' => 'error', 'message' => 'Impossible de trouver le site'];
-
-            /** @var Account $account */
-            $account = Account::repo()->getWebsiteAccount($website);
-            if (is_null($account)) return ['status' => 'error', 'message' => 'Impossible de trouver le compte associé avec votre site'];
-
             if ($response === true) {
+
+                /** @var Website $website */
+                $website = Website::findOneById($website);
+                if (is_null($website)) return ['status' => 'error', 'message' => 'Impossible de trouver le site'];
+
+                /** @var Account $account */
+                $account = Account::repo()->getWebsiteAccount($website);
+                if (is_null($account)) return ['status' => 'error', 'message' => 'Impossible de trouver le compte associé avec votre site'];
+
                 $values = $request->values();
                 try {
                     Stripe::setApiKey($this->app->data['setting']['payment']['stripe']['secret_key']);

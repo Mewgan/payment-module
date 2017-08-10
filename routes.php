@@ -3,8 +3,8 @@
 return [
 
     /* Front */
-    '/module/payment/get-invoice/:website_id/:id' => [
-        'use' => 'FrontPaymentController@getInvoice',
+    '/module/payment/get-subscription-invoice/:website_id/:id' => [
+        'use' => 'FrontPaymentController@getSubscriptionInvoice',
         'arguments' => ['website_id' => '[0-9]*', 'id' => '[0-9]*'],
     ],
 

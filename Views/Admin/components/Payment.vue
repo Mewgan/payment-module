@@ -285,6 +285,7 @@
                         amount: null
                     }
                 },
+                invoice_address: {},
                 plan: 'custom',
                 total: 0,
                 stripe: null,
@@ -419,8 +420,11 @@
             pay(token){
                 if(parseFloat(this.total) > 0){
                     let month = 1;
-                    if(this.plan == 'custom') month = this.params.default.month;
-                    else if(this.params.promo[this.plan] !== undefined) month = this.params.promo[this.plan].month;
+                    if(this.plan == 'custom') {
+                        month = this.params.default.month;
+                    } else if(this.params.promo[this.plan] !== undefined) {
+                        month = this.params.promo[this.plan].month;
+                    }
                     this.create({
                         api: payment_api.pay + this.website_id,
                         value: {

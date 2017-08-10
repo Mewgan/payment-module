@@ -3,6 +3,7 @@
 namespace Jet\Modules\Payment\Models;
 
 use Jet\Models\Account;
+use Jet\Models\Address;
 use Jet\Models\Website;
 use JetFire\Db\Model;
 use Doctrine\ORM\Mapping;
@@ -52,6 +53,11 @@ class Payment extends Model implements \JsonSerializable
      * @JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $website;
+    /**
+     * @ManyToOne(targetEntity="Jet\Models\Address")
+     * @JoinColumn(name="invoice_address_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $invoice_address;
     /**
      * @Column(type="datetime")
      */
@@ -154,6 +160,22 @@ class Payment extends Model implements \JsonSerializable
     }
 
     /**
+     * @return Address
+     */
+    public function getInvoiceAddress()
+    {
+        return $this->invoice_address;
+    }
+
+    /**
+     * @param mixed $invoice_address
+     */
+    public function setInvoiceAddress($invoice_address)
+    {
+        $this->invoice_address = $invoice_address;
+    }
+
+    /**
      * @return mixed
      */
     public function getCreatedAt()
@@ -225,10 +247,8 @@ class Payment extends Model implements \JsonSerializable
             'amount' => $this->getAmount(),
             'tax' => $this->getTax(),
             'currency' => $this->getCurrency(),
-            'account' => [
-                'id' => $this->getAccount()->getId(),
-                'email' => $this->getAccount()->getEmail()
-            ],
+            'invoice_address' => $this->getInvoiceAddress(),
+            'account' => $this->getAccount(),
             'website' => [
                 'id' => $this->getWebsite()->getId(),
                 'domain' => $this->getWebsite()->getDomain()

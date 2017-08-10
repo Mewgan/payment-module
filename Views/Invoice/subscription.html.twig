@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
-    <title>Facture {{ payment.id }}</title>
+    <title>Facture {{ str_pad(payment.id, 6, '0', STR_PAD_LEFT) }}</title>
 
     <link rel="icon" href="{{ asset('favicon.ico') }}" />
 
@@ -56,9 +56,9 @@
             </table>
             <address>
                 <strong>{{ society.name }}</strong><br/>
-                {{ society.address.address }}<br/>
-                {{ society.address.postal_code }} {{ society.address.city }}<br/>
-                {{ society.address.country }}<br/>
+                {{ payment.invoice_address.address }}<br/>
+                {{ payment.invoice_address.postal_code }} {{ payment.invoice_address.city }}<br/>
+                {{ payment.invoice_address.country }}<br/>
             </address>
         </div>
     </header>

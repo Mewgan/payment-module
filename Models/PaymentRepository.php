@@ -35,11 +35,12 @@ class PaymentRepository extends AppRepository
 
         $select = ($hasWebsite)
             ? ['p.id AS id', 'p.title as title', 'p.reference as reference', 'p.amount as amount', 'DATE_FORMAT(p.created_at,\'%d/%m/%Y à %Hh%i\') as created_at']
-            : ['p.id AS id', 'p.title as title', 'p.reference as reference', 'p.amount as amount', 'p.currency as currency', 'DATE_FORMAT(p.created_at,\'%d/%m/%Y à %Hh%i\') as created_at', 'w.id as website_id', 'DATE_FORMAT(w.expiration_date,\'%d/%m/%Y à %Hh%i\') as expiration_date', 's.name as society'];
+            : ['p.id AS id', 'p.title as title', 'p.reference as reference', 'p.amount as amount', 'p.currency as currency', 'DATE_FORMAT(p.created_at,\'%d/%m/%Y à %Hh%i\') as created_at', 'a.id as account_id', 'concat(a.first_name, \' \', a.last_name) as client', 'w.id as website_id', 's.name as society'];
 
         /* Query */
         $query->select($select)
             ->from('Jet\Modules\Payment\Models\Payment', 'p')
+            ->leftJoin('p.account', 'a')
             ->leftJoin('p.website', 'w')
             ->setFirstResult($start)
             ->setMaxResults($max);
@@ -71,10 +72,11 @@ class PaymentRepository extends AppRepository
         if (!empty($params['order'])) {
             $columns = ($hasWebsite)
                 ? ['p.title', 'p.reference', 'p.amount', 'p.amount', 'p.created_at']
-                : ['s.name', 'p.title', 'p.reference', 'p.amount', 'p.amount', 'p.created_at', 'w.expiration_date'];
+                : ['a.last_name', 's.name', 'p.title', 'p.reference', 'p.amount', 'p.amount', 'p.created_at'];
             foreach ($params['order'] as $order) {
-                if (isset($columns[$order['column']]))
+                if (isset($columns[$order['column']])) {
                     $query->addOrderBy($columns[$order['column']], strtoupper($order['dir']));
+                }
             }
         } else {
             $query->orderBy('p.id', 'DESC');
@@ -97,10 +99,8 @@ class PaymentRepository extends AppRepository
     {
         $query = Society::queryBuilder()
             ->select('partial s.{id,name}')
-            ->addSelect('partial ad.{id, address, postal_code, city, country}')
             ->addSelect('partial w.{id, domain, expiration_date}')
             ->from('Jet\Models\Society', 's')
-            ->leftJoin('s.address', 'ad')
             ->leftJoin('s.website', 'w');
 
         $result = $query->where($query->expr()->eq('w.id', ':id'))
