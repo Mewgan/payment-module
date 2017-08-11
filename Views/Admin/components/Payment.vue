@@ -430,6 +430,7 @@
                         value: {
                             total: this.total,
                             month,
+                            type: 'subscription',
                             stripeToken: token.id
                         }
                     }).then((response) => {
@@ -451,7 +452,7 @@
                 $('td:eq(2)', nRow).html(aData['amount'] + ' <i class="fa fa-' + this.detail.currency + '"></i>');
                 let totalTtc = (((this.detail.tva / 100) + 1) * parseFloat(aData['amount'])).toFixed(2);
                 $('td:eq(3)', nRow).html(totalTtc + ' <i class="fa fa-' + this.detail.currency + '"></i>');
-                $('td:eq(5)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ this.website_id + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
+                $('td:eq(5)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
             }
         },
         created() {

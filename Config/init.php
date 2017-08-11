@@ -13,6 +13,9 @@ return [
                     'title' => 'Paiement',
                     'name'=> 'module:payment',
                 ]
+            ],
+            'invoice_callbacks' => [
+                'subscription' => 'Jet\Modules\Payment\Controllers\FrontPaymentController@getSubscriptionInvoice'
             ]
         ],
         'blocks' => [

@@ -4,6 +4,7 @@ namespace Jet\Modules\Payment\Controllers;
 
 use Jet\AdminBlock\Controllers\AdminController;
 use Jet\Models\Account;
+use Jet\Models\Address;
 use Jet\Models\Website;
 use Jet\Modules\Payment\Models\Payment;
 use Jet\Modules\Payment\Requests\PaymentRequest;
@@ -94,6 +95,10 @@ class AdminPaymentController extends AdminController
                 $account = Account::repo()->getWebsiteAccount($website);
                 if (is_null($account)) return ['status' => 'error', 'message' => 'Impossible de trouver le compte associé avec votre site'];
 
+                /** @var Address $address */
+                $address = $website->getSociety()->getAddress();
+                if(is_null($address)) return ['status' => 'error', 'message' => 'Impossible de trouver l\'adresse de facturation'];
+
                 $values = $request->values();
                 try {
                     Stripe::setApiKey($this->app->data['setting']['payment']['stripe']['secret_key']);
@@ -109,12 +114,14 @@ class AdminPaymentController extends AdminController
                     if ($charge->paid === true) {
                         $payment = [
                             'title' => "Abonnement de {$values['month']} mois",
+                            'type' => $values['type'],
                             'amount' => $values['total'],
                             'tax' => $tva,
                             'currency' => $charge->currency,
                             'reference' => $charge->id,
                             'account' => $account,
-                            'website' => $website
+                            'website' => $website,
+                            'invoice_address' => $address
                         ];
                         $interval = new \DateInterval('P' . $values['month'] . 'M');
                         $new_expiration_date = $website->getExpirationDate()->add($interval);

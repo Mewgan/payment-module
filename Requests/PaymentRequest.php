@@ -25,7 +25,7 @@ class PaymentRequest extends Request
     public function rules()
     {
         return [
-            'stripeToken' => 'required',
+            'stripeToken|type' => 'required',
             'total|month' => 'required|numeric',
         ];
     }

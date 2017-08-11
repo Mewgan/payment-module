@@ -22,27 +22,46 @@ class FrontPaymentController extends Controller
     /**
      * @param Auth $auth
      * @param Pdf $pdf
-     * @param LogProvider $logger 
-     * @param $website
+     * @param LogProvider $logger
      * @param $id
+     * @return \JetFire\Framework\System\Redirect|mixed|null
+     */
+    public function getInvoice(Auth $auth, Pdf $pdf, LogProvider $logger, $id)
+    {
+        /** @var Payment $payment */
+        $payment = Payment::findOneById($id);
+        if(!is_null($payment) && isset($this->app->data['app']['Payment']['invoice_callbacks'][$payment->getType()])) {
+            $callback = explode('@', $this->app->data['app']['Payment']['invoice_callbacks'][$payment->getType()]);
+            if(isset($callback[1])) {
+                $response = $this->callMethod($callback[0], $callback[1], ['auth' => $auth, 'pdf' => $pdf, 'logger' => $logger, 'payment' => $payment]);
+                if(!is_null($response)) return $response;
+            }
+        }
+        return $this->redirect('public.page', ['_locale' => $this->app->data['_locale']]);
+    }
+
+    /**
+     * @param Auth $auth
+     * @param Pdf $pdf
+     * @param LogProvider $logger
+     * @param Payment $payment
      * @return mixed
      */
-    public function getSubscriptionInvoice(Auth $auth, Pdf $pdf, LogProvider $logger, $website, $id)
+    public function getSubscriptionInvoice(Auth $auth, Pdf $pdf, LogProvider $logger, Payment $payment)
     {
-        if ($this->isWebsiteOwner($auth, $website)) {
-            /** @var Payment $payment */
-            $payment = Payment::findOneBy(['id' => $id, 'website' => $website]);
+        if (!is_null($payment->getWebsite()) && $this->isWebsiteOwner($auth, $payment->getWebsite())) {
             if (!is_null($payment)) {
-                $society = Payment::repo()->getSocietyDetail($website);
+                $society = Payment::repo()->getSocietyDetail($payment->getWebsite()->getId());
                 if (!is_null($society)) {
-                    $this->getInvoice($pdf, $logger, 'Invoice/subscription', [
+                    return $this->renderInvoice($pdf, $logger, $payment->getReference(), 'Invoice/subscription', [
                         'payment' => $payment,
+                        'invoice_address' => $payment->getInvoiceAddress(),
                         'society' => $society,
                     ]);
                 }
             }
         }
-        return $this->redirect('public.page', ['_locale' => $this->app->data['_locale']]);
+        return null;
     }
 
 
@@ -54,7 +73,7 @@ class FrontPaymentController extends Controller
      * @param array $data
      * @return bool
      */
-    private function getInvoice(Pdf $pdf, LogProvider $logger, $reference, $layout, $data = [])
+    private function renderInvoice(Pdf $pdf, LogProvider $logger, $reference, $layout, $data = [])
     {
         $log = $logger->getLogger('payment');
         try {
@@ -75,6 +94,6 @@ class FrontPaymentController extends Controller
         } catch (\Exception $e) {
             $log->addError($e->getMessage());
         }
-        return true;
+        return null;
     }
 }

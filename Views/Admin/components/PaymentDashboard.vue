@@ -65,7 +65,7 @@
                 $('td:eq(4)', nRow).html(aData['amount'] + ' <i class="fa fa-' + aData['currency'] + '"></i>');
                 let totalTtc = (((this.params.stripe.tva / 100) + 1) * parseFloat(aData['amount'])).toFixed(2);
                 $('td:eq(5)', nRow).html(totalTtc + ' <i class="fa fa-' + aData['currency'] + '"></i>');
-                $('td:eq(7)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ aData['website_id'] + '/' + aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
+                $('td:eq(7)', nRow).html('<a class="btn btn-default" href="' + this.system.domain + '/module/payment/get-invoice/'+ aData['id'] + '" target="_blank"><i class="fa fa-file-text" aria-hidden="true"></i> Facture</a>');
             }
         },
         created(){

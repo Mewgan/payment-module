@@ -32,6 +32,10 @@ class Payment extends Model implements \JsonSerializable
      */
     protected $title;
     /**
+     * @Column(type="string")
+     */
+    protected $type;
+    /**
      * @Column(type="float")
      */
     protected $amount;
@@ -109,6 +113,22 @@ class Payment extends Model implements \JsonSerializable
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param mixed $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 
     /**
@@ -244,6 +264,7 @@ class Payment extends Model implements \JsonSerializable
             'id' => $this->getId(),
             'reference' => $this->getReference(),
             'title' => $this->getTitle(),
+            'type' => $this->getType(),
             'amount' => $this->getAmount(),
             'tax' => $this->getTax(),
             'currency' => $this->getCurrency(),
